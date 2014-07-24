@@ -34,4 +34,8 @@ public class DomainParser {
     public String getKeyWord() {
         return ((AmlParser.DataContext) tree.getChild(0)).keyword.getText();
     }
+
+    public String getPropertyName(int index) {
+        return getPropertyList().get(index).property_name.getText();
+    }
 }

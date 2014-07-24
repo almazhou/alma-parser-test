@@ -56,8 +56,9 @@ public class AmlParserTest {
 
         assertThat(propertyList.size(), is(2));
 
-        assertThat(propertyList.get(0).property_name.getText(), is("first"));
-        assertThat(propertyList.get(1).property_name.getText(), is("second"));
+        int index = 0;
+        assertThat(domainParser.getPropertyName(index), is("first"));
+        assertThat(domainParser.getPropertyName(1), is("second"));
 
     }
 
