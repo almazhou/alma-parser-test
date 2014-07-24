@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.io.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -17,6 +16,7 @@ public class AmlParserTest {
     private ParseTree tree;
     private List<AmlParser.PropertyContext> propertyList;
     private DomainParser domainParser;
+    private AmlParser parser;
 
     @Before
     public void setUp() throws Exception {
@@ -26,18 +26,25 @@ public class AmlParserTest {
                 "}";
 
         File file = getFile(test, "classpath:test.aml");
-        tree = getParseTree(file);
-        propertyList = getPropertyList(tree);
+
+        InputStream fileInputStream = new FileInputStream(file);
+
+        ANTLRInputStream input = new ANTLRInputStream(fileInputStream);
+        AmlLexer lexer = new AmlLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        parser = new AmlParser(tokens);
+        tree = parser.file();
+        domainParser = new DomainParser(tree);
+        propertyList = domainParser.getPropertyList();
 
     }
 
     @Test
     public void should_return_keyword_data_name_and_extend_name() throws Exception {
-        ParseTree child = tree.getChild(0);
 
-        String keyword = ((AmlParser.DataContext) child).keyword.getText();
-        String data_name = ((AmlParser.DataContext) child).data_name.getText();
-        String extend_name = ((AmlParser.DataContext) child).extend_name.getText();
+        String keyword = domainParser.getKeyWord();
+        String data_name = domainParser.getDataName();
+        String extend_name = domainParser.getExtendName();
 
         assertThat(keyword, is("group"));
         assertThat(data_name, is("5457_A3SB_A49A"));
@@ -56,8 +63,8 @@ public class AmlParserTest {
 
     @Test
     public void should_return_property_value_for_each_property() throws Exception {
-        List<Object> first = getPropertyValueList(0, propertyList);
-        List<Object> second = getPropertyValueList(1, propertyList);
+        List<Object> first = domainParser.getPropertyValueList(0);
+        List<Object> second = domainParser.getPropertyValueList(1);
 
         String first_1 = ((TerminalNode) first.get(0)).getText();
         String first_2 = ((TerminalNode) first.get(1)).getText();
@@ -68,16 +75,6 @@ public class AmlParserTest {
         assertThat(first_2, is("4"));
         assertThat(second_1, is("test"));
         assertThat(second_2, is("3.4"));
-    }
-
-    public List<Object> getPropertyValueList(int property_index, List<AmlParser.PropertyContext> propertyList1) {
-        List<ParseTree> propertyValues = propertyList1.get(property_index).value().children;
-
-        return propertyValues.stream().filter(parseTree -> !(parseTree instanceof AmlParser.CommaContext)).collect(Collectors.toList());
-    }
-
-    public List<AmlParser.PropertyContext> getPropertyList(ParseTree tree1) {
-        return ((AmlParser.DataContext) tree1.getChild(0)).property();
     }
 
     private File getFile(String test, String filePath) {
@@ -102,14 +99,4 @@ public class AmlParserTest {
         }
     }
 
-    private ParseTree getParseTree(File file) throws IOException {
-
-        InputStream fileInputStream = new FileInputStream(file);
-
-        ANTLRInputStream input = new ANTLRInputStream(fileInputStream);
-        AmlLexer lexer = new AmlLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        DomainParser.parser = new AmlParser(tokens);
-        return DomainParser.parser.file();
-    }
 }
