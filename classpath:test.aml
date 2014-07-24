@@ -1,0 +1,4 @@
+group 5457_A3SB_A49A extends ProductGroup {
+	first = 1,4;
+	second = test,3.4;
+}

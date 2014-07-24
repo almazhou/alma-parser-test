@@ -1,0 +1,45 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+buildscript {
+    repositories {
+        maven {
+            name 'JFrog OSS snapshot repo'
+            url  'https://oss.jfrog.org/oss-snapshot-local/'
+        }
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'me.champeau.gradle:antlr4-gradle-plugin:0.1-SNAPSHOT'
+    }
+}
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+
+apply plugin: 'antlr4'
+
+compileJava.dependsOn antlr4
+
+sourceSets.main.java.srcDirs += antlr4.output
+
+configurations {
+    compile.extendsFrom antlr4
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
