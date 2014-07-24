@@ -16,6 +16,7 @@ public class AmlParserTest {
 
     private ParseTree tree;
     private List<AmlParser.PropertyContext> propertyList;
+    private DomainParser domainParser;
 
     @Before
     public void setUp() throws Exception {
@@ -26,7 +27,7 @@ public class AmlParserTest {
 
         File file = getFile(test, "classpath:test.aml");
         tree = getParseTree(file);
-        propertyList = getPropertyList();
+        propertyList = getPropertyList(tree);
 
     }
 
@@ -55,8 +56,8 @@ public class AmlParserTest {
 
     @Test
     public void should_return_property_value_for_each_property() throws Exception {
-        List<Object> first = getPropertyValueList(0);
-        List<Object> second = getPropertyValueList(1);
+        List<Object> first = getPropertyValueList(0, propertyList);
+        List<Object> second = getPropertyValueList(1, propertyList);
 
         String first_1 = ((TerminalNode) first.get(0)).getText();
         String first_2 = ((TerminalNode) first.get(1)).getText();
@@ -69,14 +70,14 @@ public class AmlParserTest {
         assertThat(second_2, is("3.4"));
     }
 
-    private List<Object> getPropertyValueList(int property_index) {
-        List<ParseTree> propertyValues = propertyList.get(property_index).value().children;
+    public List<Object> getPropertyValueList(int property_index, List<AmlParser.PropertyContext> propertyList1) {
+        List<ParseTree> propertyValues = propertyList1.get(property_index).value().children;
 
-        return propertyValues.stream().filter(parseTree ->!(parseTree instanceof AmlParser.CommaContext)).collect(Collectors.toList());
+        return propertyValues.stream().filter(parseTree -> !(parseTree instanceof AmlParser.CommaContext)).collect(Collectors.toList());
     }
 
-    private List<AmlParser.PropertyContext> getPropertyList() {
-        return ((AmlParser.DataContext) tree.getChild(0)).property();
+    public List<AmlParser.PropertyContext> getPropertyList(ParseTree tree1) {
+        return ((AmlParser.DataContext) tree1.getChild(0)).property();
     }
 
     private File getFile(String test, String filePath) {
@@ -108,7 +109,7 @@ public class AmlParserTest {
         ANTLRInputStream input = new ANTLRInputStream(fileInputStream);
         AmlLexer lexer = new AmlLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        AmlParser parser = new AmlParser(tokens);
-        return parser.file();
+        DomainParser.parser = new AmlParser(tokens);
+        return DomainParser.parser.file();
     }
 }
