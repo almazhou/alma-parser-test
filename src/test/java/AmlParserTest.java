@@ -1,7 +1,6 @@
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -64,13 +63,11 @@ public class AmlParserTest {
 
     @Test
     public void should_return_property_value_for_each_property() throws Exception {
-        List<Object> first = domainParser.getPropertyValueList(0);
-        List<Object> second = domainParser.getPropertyValueList(1);
 
-        String first_1 = ((TerminalNode) first.get(0)).getText();
-        String first_2 = ((TerminalNode) first.get(1)).getText();
-        String second_1 = ((TerminalNode) second.get(0)).getText();
-        String second_2 = ((TerminalNode) second.get(1)).getText();
+        String first_1 = domainParser.getPropertyValue(0, 0);
+        String first_2 = domainParser.getPropertyValue(0, 1);
+        String second_1 = domainParser.getPropertyValue(1, 0);
+        String second_2 = domainParser.getPropertyValue(1, 1);
 
         assertThat(first_1, is("1"));
         assertThat(first_2, is("4"));

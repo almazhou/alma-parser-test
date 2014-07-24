@@ -1,4 +1,5 @@
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,5 +38,9 @@ public class DomainParser {
 
     public String getPropertyName(int index) {
         return getPropertyList().get(index).property_name.getText();
+    }
+
+    public String getPropertyValue(int propertyIndex, int valueIndex) {
+        return ((TerminalNode) getPropertyValueList(propertyIndex).get(valueIndex)).getText();
     }
 }
