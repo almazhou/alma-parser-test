@@ -1,0 +1,6 @@
+puid 4567 extends Cable {
+    length = 1.0;
+    color = Gray;
+    network = 10mm_sdl;
+    fabric = TW;
+}

@@ -16,12 +16,12 @@ public class DomainParser {
         this.tree = tree;
     }
 
-    public List<AmlParser.PropertyContext> getPropertyList() {
-        return ((AmlParser.DataContext) tree.getChild(0)).property();
+    public List<AmlParser.PropertyContext> getPropertyList(int index) {
+        return ((AmlParser.DataContext) tree.getChild(index)).property();
     }
 
-    public List<Object> getPropertyValueList(int property_index) {
-        List<ParseTree> propertyValues = getPropertyList().get(property_index).value().children;
+    public List<Object> getPropertyValueList(int data_index, int property_index) {
+        List<ParseTree> propertyValues = getPropertyList(data_index).get(property_index).value().children;
 
         return propertyValues.stream().filter(parseTree -> !(parseTree instanceof AmlParser.CommaContext)).collect(Collectors.toList());
     }
@@ -39,15 +39,15 @@ public class DomainParser {
     }
 
     public String getPropertyName(int index) {
-        return getPropertyList().get(index).property_name.getText();
+        return getPropertyList(0).get(index).property_name.getText();
     }
 
-    public String getPropertyValue(int propertyIndex, int valueIndex) {
-        return ((TerminalNode) getPropertyValueList(propertyIndex).get(valueIndex)).getText();
+    public String getPropertyValue(int propertyIndex, int valueIndex, int data_index) {
+        return ((TerminalNode) getPropertyValueList(data_index, propertyIndex).get(valueIndex)).getText();
     }
 
-    public List<String> getValues(String propertyName) {
-        List<AmlParser.PropertyContext> findProperty = getPropertyList().stream().filter(property -> property.property_name.getText().equals(propertyName)).collect(Collectors.toList());
+    public List<String> getValues(String propertyName, int data_index) {
+        List<AmlParser.PropertyContext> findProperty = getPropertyList(data_index).stream().filter(property -> property.property_name.getText().equals(propertyName)).collect(Collectors.toList());
         if(findProperty.size() == 0) {
             throw new PropertyNotFoundException("Perperty named " + propertyName + " not found" );
         }
