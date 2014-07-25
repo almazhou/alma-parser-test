@@ -25,6 +25,11 @@ public class AmlParserTest {
                 "\tsecond = test,3.4;\n" +
                 "}";
 
+        init(test);
+
+    }
+
+    private void init(String test) throws IOException {
         File file = getFile(test, "classpath:test.aml");
 
         InputStream fileInputStream = new FileInputStream(file);
@@ -36,7 +41,6 @@ public class AmlParserTest {
         tree = parser.file();
         domainParser = new DomainParser(tree);
         propertyList = domainParser.getPropertyList();
-
     }
 
     @Test
@@ -90,6 +94,17 @@ public class AmlParserTest {
     @Test(expected = PropertyNotFoundException.class)
     public void should_return_throw_property_not_found_exception_when_not_found() throws Exception {
         List<String> first_1 = domainParser.getValues("whatever");
+    }
+
+    @Test(expected = MultiplePropertyException.class)
+    public void should_return_throw_duplicate_property_exception_when_found_more_than_one() throws Exception {
+        String test = "group 5457_A3SB_A49A extends ProductGroup {\n" +
+                "\tfirst = 1,4;\n" +
+                "\tfirst = test,3.4;\n" +
+                "}";
+
+        init(test);
+        List<String> first_1 = domainParser.getValues("first");
     }
 
     private File getFile(String test, String filePath) {

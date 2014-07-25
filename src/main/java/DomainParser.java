@@ -48,7 +48,11 @@ public class DomainParser {
     public List<String> getValues(String propertyName) {
         List<AmlParser.PropertyContext> findProperty = getPropertyList().stream().filter(property -> property.property_name.getText().equals(propertyName)).collect(Collectors.toList());
         if(findProperty.size() == 0) {
-            throw new PropertyNotFoundException();
+            throw new PropertyNotFoundException("Perperty named " + propertyName + " not found" );
+        }
+
+        if(findProperty.size() > 1){
+            throw new MultiplePropertyException("There is more than one property have the save name " + propertyName);
         }
 
         AmlParser.PropertyContext propertyContext = findProperty.get(0);
