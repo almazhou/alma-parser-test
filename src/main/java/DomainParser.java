@@ -2,6 +2,7 @@ import com.sun.javafx.fxml.PropertyNotFoundException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,9 @@ public class DomainParser {
         AmlParser.PropertyContext propertyContext = findProperty.get(0);
 
         List<ParseTree> values = propertyContext.value().children;
+        if(values == null){
+            return Arrays.asList("");
+        }
 
         List<ParseTree> findValues = values.stream().filter(value -> !(value instanceof AmlParser.CommaContext)).collect(Collectors.toList());
         List<String> gotValues = findValues.stream().map(gotValue -> gotValue.getText()).collect(Collectors.toList());

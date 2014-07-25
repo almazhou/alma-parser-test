@@ -107,6 +107,18 @@ public class AmlParserTest {
         List<String> first_1 = domainParser.getValues("first");
     }
 
+    @Test
+    public void should_return_empty_string_with_empty_value() throws Exception {
+        String test = "group 5457_A3SB_A49A extends ProductGroup {\n" +
+                "\tfirst = ;\n" +
+                "}";
+
+        init(test);
+        List<String> first_1 = domainParser.getValues("first");
+
+        assertThat(first_1.get(0) , is(""));
+    }
+
     private File getFile(String test, String filePath) {
         writeToFile(test, filePath);
 
